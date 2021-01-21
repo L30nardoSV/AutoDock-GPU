@@ -106,7 +106,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "performdocking.h"
 #include "stringify.h"
 #include "correct_grad_axisangle.h"
-#include <sys/time.h>
+#include "measure_time.hpp"
 
 inline float average(float* average_sd2_N)
 {
@@ -432,7 +432,7 @@ filled with clock() */
 	int new_progress_cnt;
 
 	double search_num_sec, search_num_usec, search_elapsed_sec;
-	timeval search_time_start, search_time_end;
+	timeval search_timer;
 
 	//setting number of blocks and threads
 	threadsPerBlock = NUM_OF_THREADS_PER_BLOCK;
@@ -688,7 +688,7 @@ filled with clock() */
 	printf("dockpars.rotbondlist_length:%u\n", dockpars.rotbondlist_length);
 	*/
 
-	gettimeofday(&search_time_start, NULL);
+	start_timer(search_timer);
 
 #ifdef DOCK_DEBUG
 	printf("\n");
@@ -1274,10 +1274,7 @@ filled with clock() */
 		memcopyBufferObjectFromDevice(tData.command_queue,sim_state.cpu_energies.data(),mem_dockpars_energies_next,size_energies);
 	}
 
-	gettimeofday(&search_time_end, NULL);
-	search_num_sec = search_time_end.tv_sec - search_time_start.tv_sec;
-	search_num_usec = search_time_end.tv_usec - search_time_start.tv_usec;
-	search_elapsed_sec = search_num_sec + (search_num_usec/1000000);
+	search_elapsed_sec = seconds_since(search_timer);
 	printf("\n\nAccelerator (docking search) time: %.3f sec\n", search_elapsed_sec);
 
 	// Final autostop statistics output
