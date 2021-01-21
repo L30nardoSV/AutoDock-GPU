@@ -106,6 +106,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "performdocking.h"
 #include "stringify.h"
 #include "correct_grad_axisangle.h"
+#include <sys/time.h>
 
 inline float average(float* average_sd2_N)
 {
@@ -433,6 +434,9 @@ filled with clock() */
 	clock_t clock_start_docking;
 	clock_t	clock_stop_docking;
 
+	double search_num_sec, search_num_usec, search_elapsed_sec;
+	timeval search_time_start, search_time_end;
+
 	//setting number of blocks and threads
 	threadsPerBlock = NUM_OF_THREADS_PER_BLOCK;
 	blocksPerGridForEachEntity = mypars->pop_size * mypars->num_of_runs;
@@ -688,6 +692,7 @@ filled with clock() */
 	*/
 
 	clock_start_docking = clock();
+	gettimeofday(&search_time_start, NULL);
 
 #ifdef DOCK_DEBUG
 	printf("\n");
@@ -1274,6 +1279,12 @@ filled with clock() */
 		memcopyBufferObjectFromDevice(tData.command_queue,sim_state.cpu_energies.data(),mem_dockpars_energies_next,size_energies);
 	}
 
+	gettimeofday(&search_time_end, NULL);
+	search_num_sec = search_time_end.tv_sec - search_time_start.tv_sec;
+	search_num_usec = search_time_end.tv_usec - search_time_start.tv_usec;
+	search_elapsed_sec = search_num_sec + (search_num_usec/1000000);
+	printf("Docking run time: %.3f sec\n", search_elapsed_sec);
+
 	// Final autostop statistics output
 	if (mypars->autostop) autostop.output_final_stddev(generation_cnt, sim_state.cpu_energies.data(), total_evals);
 
@@ -1290,6 +1301,14 @@ filled with clock() */
 	sim_state.generation_cnt = generation_cnt;
 	sim_state.sec_per_run = ELAPSEDSECS(clock_stop_docking, clock_start_docking)/mypars->num_of_runs;
 	sim_state.total_evals = total_evals;
+
+	char search_report_file_name[256];
+	FILE* fp;
+	strcpy(search_report_file_name, mypars->resname);
+	strcat(search_report_file_name, ".dlg");
+	fp = fopen(search_report_file_name, "a");
+	fprintf(fp, "\n\n\nDocking run time %.3f sec\n", search_elapsed_sec);
+	fclose(fp);
 
 	clReleaseMemObject(mem_dockpars_conformations_current);
 	clReleaseMemObject(mem_dockpars_energies_current);
