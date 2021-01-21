@@ -431,9 +431,6 @@ filled with clock() */
 	int curr_progress_cnt;
 	int new_progress_cnt;
 
-	clock_t clock_start_docking;
-	clock_t	clock_stop_docking;
-
 	double search_num_sec, search_num_usec, search_elapsed_sec;
 	timeval search_time_start, search_time_end;
 
@@ -691,7 +688,6 @@ filled with clock() */
 	printf("dockpars.rotbondlist_length:%u\n", dockpars.rotbondlist_length);
 	*/
 
-	clock_start_docking = clock();
 	gettimeofday(&search_time_start, NULL);
 
 #ifdef DOCK_DEBUG
@@ -1255,7 +1251,6 @@ filled with clock() */
 	profile.nev_at_stop = total_evals/mypars->num_of_runs;
 	profile.autostopped = autostop.did_stop();
 
-	clock_stop_docking = clock();
 	if (mypars->autostop==0)
 	{
 		//update progress bar (bar length is 50)mem_num_of_rotatingatoms_per_rotbond_const
@@ -1299,16 +1294,8 @@ filled with clock() */
 	// Assign simulation results to sim_state
 	sim_state.myligand_reference = myligand_reference;
 	sim_state.generation_cnt = generation_cnt;
-	sim_state.sec_per_run = ELAPSEDSECS(clock_stop_docking, clock_start_docking)/mypars->num_of_runs;
+	sim_state.sec_per_run = search_elapsed_sec/mypars->num_of_runs;
 	sim_state.total_evals = total_evals;
-
-	char search_report_file_name[256];
-	FILE* fp;
-	strcpy(search_report_file_name, mypars->resname);
-	strcat(search_report_file_name, ".dlg");
-	fp = fopen(search_report_file_name, "a");
-	fprintf(fp, "\n\nAccelerator (docking search) time: %.3f sec\n", search_elapsed_sec);
-	fclose(fp);
 
 	clReleaseMemObject(mem_dockpars_conformations_current);
 	clReleaseMemObject(mem_dockpars_energies_current);
