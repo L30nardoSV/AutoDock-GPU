@@ -1283,7 +1283,7 @@ filled with clock() */
 	search_num_sec = search_time_end.tv_sec - search_time_start.tv_sec;
 	search_num_usec = search_time_end.tv_usec - search_time_start.tv_usec;
 	search_elapsed_sec = search_num_sec + (search_num_usec/1000000);
-	printf("\n\n\nDocking run time: %.3f sec\n", search_elapsed_sec);
+	printf("\n\nTime spent on docking search by accelerator: %.3f sec\n", search_elapsed_sec);
 
 	// Final autostop statistics output
 	if (mypars->autostop) autostop.output_final_stddev(generation_cnt, sim_state.cpu_energies.data(), total_evals);
@@ -1307,7 +1307,7 @@ filled with clock() */
 	strcpy(search_report_file_name, mypars->resname);
 	strcat(search_report_file_name, ".dlg");
 	fp = fopen(search_report_file_name, "a");
-	fprintf(fp, "\n\n\nDocking run time %.3f sec\n", search_elapsed_sec);
+	fprintf(fp, "\n\nTime spent on docking search by acceleratore %.3f sec\n", search_elapsed_sec);
 	fclose(fp);
 
 	clReleaseMemObject(mem_dockpars_conformations_current);
