@@ -40,33 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "profile.hpp"
 #include "simulation_state.hpp"
 #include "GpuData.h"
-
-#ifndef _WIN32
-// Time measurement
-#include <sys/time.h>
-#endif
-
-template<typename T>
-inline double seconds_since(T& time_start)
-{
-#ifndef _WIN32
-	timeval time_end;
-	gettimeofday(&time_end,NULL);
-        double num_sec     = time_end.tv_sec  - time_start.tv_sec;
-        double num_usec    = time_end.tv_usec - time_start.tv_usec;
-        return (num_sec + (num_usec/1000000));
-#else
-	return 0.0;
-#endif
-}
-
-template<typename T>
-inline void start_timer(T& time_start)
-{
-#ifndef _WIN32
-	gettimeofday(&time_start,NULL);
-#endif
-}
+#include "measure_time.hpp"
 
 int main(int argc, char* argv[])
 {
