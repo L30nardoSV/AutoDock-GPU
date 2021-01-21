@@ -462,7 +462,20 @@ int gen_rotlist(Liganddata* myligand, int rotlist[MAX_NUM_OF_ROTATIONS])
 {
 	int atom_id, rotb_id, parallel_rot_id, rotlist_id;
 	int number_of_req_rotations[MAX_NUM_OF_ATOMS];
+
+	// PARCOSI
+	// When allowing larger sizes (i.e., 512, 1024, 2048)
+	// of OpenCL workgroups or CUDA blocks than 256,
+	// this definition causes a segmentation fault as
+	// the loop below has a "parallel_rot_id" index
+	// that can be between [0, NUM_OF_THREADS_PER_BLOCK-1].
+	// That index is used to access "atom_id_of_numrots[]" elements,
+	// whose indexes fall between [0, 255].
+	// This fault did not manisfest previously
+	// as we tried workgroup sizes only up to 256,
+	// which luckily are smaller than the array size.
 	int atom_id_of_numrots[MAX_NUM_OF_ATOMS];
+
 	bool atom_wasnt_rotated_yet[MAX_NUM_OF_ATOMS];
 	int new_rotlist_element;
 	bool rotbond_found;
