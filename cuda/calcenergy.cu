@@ -402,13 +402,11 @@ __device__ void gpu_calc_energy(
 				smoothed_distance = atomic_distance + copysign(delta_distance,opt_dist_delta);
 			} else smoothed_distance = opt_distance;
 			// Calculating van der Waals / hydrogen bond term
-			energy += (cData.pKerconst_intra->VWpars_AC_const[idx]
+			float vdw_energy = (cData.pKerconst_intra->VWpars_AC_const[idx]
 			           -__powf(smoothed_distance,m-n)*cData.pKerconst_intra->VWpars_BD_const[idx])
 			           *__powf(smoothed_distance,-m);
-			float energy_vdw = (cData.pKerconst_intra->VWpars_AC_const[idx]
-			           -__powf(smoothed_distance,m-n)*cData.pKerconst_intra->VWpars_BD_const[idx])
-			           *__powf(smoothed_distance,-m);
-			printf("%f\n", energy_vdw);
+			energy += vdw_energy;
+			printf("%f\n", vdw_energy);
 			#if defined (DEBUG_ENERGY_KERNEL)
 			intraE += (cData.pKerconst_intra->VWpars_AC_const[idx]
 			           -__powf(smoothed_distance,m-n)*cData.pKerconst_intra->VWpars_BD_const[idx])
