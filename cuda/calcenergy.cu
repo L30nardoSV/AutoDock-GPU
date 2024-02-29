@@ -452,7 +452,7 @@ __device__ void gpu_calc_energy(
 	// reduction to calculate energy
 	REDUCEFLOATSUM(vdw_energy, pFloatAccumulator)
 	if (threadIdx.x == 0)
-		printf("%f\n", vdw_energy);
+		printf("vdw_energy = %f\n", vdw_energy);
 
 	REDUCEFLOATSUM(energy, pFloatAccumulator)
 

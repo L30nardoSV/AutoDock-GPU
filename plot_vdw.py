@@ -10,13 +10,18 @@ import numpy as np
 #filename = 'data_small_vdw'
 filename = 'data_vdw'
 y = []
+vdw_text = "vdw_energy = "
 
 with open(filename) as f:
 	lines = f.readlines()
 	for line in lines:
-		s = line.split()
-		s = float(s[0])
-		y.append(s)
+		if vdw_text in line:
+			#print(line)
+			s = line.split()
+			#print(s)
+			s = float(s[2])
+			#print(s)
+			y.append(s)
 
 # Identifying lengths, mins, and maxs
 leny = len(y); miny = min(y); maxy = max(y)
