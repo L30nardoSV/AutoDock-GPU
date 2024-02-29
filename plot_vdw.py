@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 
-filename = 'data_small_vdw'
-#filename = 'data_vdw'
+#filename = 'data_small_vdw'
+filename = 'data_vdw'
 y = []
 
 with open(filename) as f:
@@ -49,3 +49,4 @@ plt.xlabel("Samples")
 plt.ylabel("Energy (kcal/mol)")
 
 plt.show()
+# In a 16GB system, this works well up to input lists of 24 millions element (file size of 230 MB)
