@@ -124,6 +124,7 @@ __device__ void gpu_calc_energy(
 // determines which reference orientation should be used.
 {
 	energy = 0.0f;
+	float tmp_vdw;
 	float vdw_energy = 0.0f;
 
 #if defined (DEBUG_ENERGY_KERNEL)
@@ -404,10 +405,11 @@ __device__ void gpu_calc_energy(
 				smoothed_distance = atomic_distance + copysign(delta_distance,opt_dist_delta);
 			} else smoothed_distance = opt_distance;
 			// Calculating van der Waals / hydrogen bond term
-			vdw_energy = (cData.pKerconst_intra->VWpars_AC_const[idx]
+			tmp_vdw = (cData.pKerconst_intra->VWpars_AC_const[idx]
 			           -__powf(smoothed_distance,m-n)*cData.pKerconst_intra->VWpars_BD_const[idx])
 			           *__powf(smoothed_distance,-m);
-			energy += vdw_energy;
+			vdw_energy += tmp_vdw;
+			energy += tmp_vdw;
 
 			#if defined (DEBUG_ENERGY_KERNEL)
 			intraE += (cData.pKerconst_intra->VWpars_AC_const[idx]
