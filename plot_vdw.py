@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 
-#filename = 'data_small_vdw'
-filename = 'data_vdw'
+filename = 'data_small_vdw'
+#filename = 'data_vdw'
 y = []
 
 with open(filename) as f:
