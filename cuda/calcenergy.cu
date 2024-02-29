@@ -127,6 +127,12 @@ __device__ void gpu_calc_energy(
 	float tmp_vdw;
 	float vdw_energy = 0.0f;
 
+	float tmp_el;
+	float el_energy = 0.0f;
+
+	float tmp_desol;
+	float acc_desol_energy = 0.0f;
+
 #if defined (DEBUG_ENERGY_KERNEL)
 	float interE = 0.0f;
 	float intraE = 0.0f;
@@ -438,12 +444,17 @@ __device__ void gpu_calc_energy(
 							cData.dockpars.coeff_desolv*(12.96f-0.1063f*dist2*(1.0f-0.001947f*dist2)) /
 							(12.96f+dist2*(0.4137f+dist2*(0.00357f+0.000112f*dist2)))
 						 );
+			tmp_desol = desolv_energy;
+			acc_desol_energy += tmp_desol;
+
 			// Calculating electrostatic term
 			float dist_shift=atomic_distance+1.26366f;
 			dist2=dist_shift*dist_shift;
 			float diel = (1.10859f / dist2)+0.010358f;
 			float es_energy = cData.dockpars.coeff_elec * q1 * q2 / atomic_distance;
-			energy += diel * es_energy + desolv_energy;
+			tmp_el = diel * es_energy;
+			el_energy += tmp_el;
+			energy += /*diel * es_energy*/tmp_el + /*desolv_energy*/tmp_desol;
 
 			#if defined (DEBUG_ENERGY_KERNEL)
 			intraE += diel * es_energy + desolv_energy;
@@ -452,9 +463,21 @@ __device__ void gpu_calc_energy(
 	} // End contributor_counter for-loop (INTRAMOLECULAR ENERGY)
 
 	// reduction to calculate energy
+/*
 	REDUCEFLOATSUM(vdw_energy, pFloatAccumulator)
 	if (threadIdx.x == 0)
 		printf("vdw_energy = %f\n", vdw_energy);
+*/
+
+/*
+	REDUCEFLOATSUM(el_energy, pFloatAccumulator)
+	if (threadIdx.x == 0)
+		printf("vdw_energy = %f\n", el_energy);
+*/
+
+	REDUCEFLOATSUM(acc_desol_energy, pFloatAccumulator)
+	if (threadIdx.x == 0)
+		printf("vdw_energy = %f\n", acc_desol_energy);
 
 	REDUCEFLOATSUM(energy, pFloatAccumulator)
 
