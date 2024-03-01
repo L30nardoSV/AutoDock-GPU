@@ -23,6 +23,14 @@ vdw = []
 el = []
 desol = []
 
+all_min_vdw = []
+all_min_el  = []
+all_min_desol = []
+
+all_max_vdw = []
+all_max_el  = []
+all_max_desol = []
+
 for myfile in dir_list:
 	filename = path + '/' + myfile
 
@@ -62,6 +70,11 @@ for myfile in dir_list:
 	max_all = max(max_vdw, max_el, max_desol)
 	t_all = [min_all, max_all]
 	print("min_all =", min_all, "\tmax_all =", max_all)
+
+	# Appending all mins and maxs
+	all_min_vdw.append(min_vdw); all_max_vdw.append(max_vdw)
+	all_min_el.append(min_el); all_max_el.append(max_el)
+	all_min_desol.append(min_desol); all_max_desol.append(max_desol)
 
 #	# Plotting
 #	fig, axs = plt.subplots(3, sharex=True)
@@ -117,3 +130,12 @@ for myfile in dir_list:
 	# Label in x axis is shared
 #	plt.xlabel("Samples")
 #	plt.show()
+
+#print('\n')
+#print(all_min_vdw); print(all_max_vdw)
+#print(all_min_el); print(all_max_el)
+#print(all_min_desol); print(all_max_desol)
+print('\nMins and maxs in all tests')
+print("min_vdw = ", min(all_min_vdw), "\tmax_vdw = ", max(all_max_vdw))
+print("min_el = ", min(all_min_el), "\tmax_el = ", max(all_max_el))
+print("min_desol = ", min(all_min_desol), "\tmax_desol = ", max(all_max_desol))
