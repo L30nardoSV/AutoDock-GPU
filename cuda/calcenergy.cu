@@ -125,13 +125,13 @@ __device__ void gpu_calc_energy(
 {
 	energy = 0.0f;
 	float tmp_vdw;
-	float vdw_energy = 0.0f;
+	float vdw_term = 0.0f;
 
 	float tmp_el;
-	float el_energy = 0.0f;
+	float el_term = 0.0f;
 
 	float tmp_desol;
-	float acc_desol_energy = 0.0f;
+	float desol_term = 0.0f;
 
 #if defined (DEBUG_ENERGY_KERNEL)
 	float interE = 0.0f;
@@ -414,7 +414,7 @@ __device__ void gpu_calc_energy(
 			tmp_vdw = (cData.pKerconst_intra->VWpars_AC_const[idx]
 			           -__powf(smoothed_distance,m-n)*cData.pKerconst_intra->VWpars_BD_const[idx])
 			           *__powf(smoothed_distance,-m);
-			vdw_energy += tmp_vdw;
+			vdw_term += tmp_vdw;
 			energy += tmp_vdw;
 
 			#if defined (DEBUG_ENERGY_KERNEL)
@@ -445,7 +445,7 @@ __device__ void gpu_calc_energy(
 							(12.96f+dist2*(0.4137f+dist2*(0.00357f+0.000112f*dist2)))
 						 );
 			tmp_desol = desolv_energy;
-			acc_desol_energy += tmp_desol;
+			desol_term += tmp_desol;
 
 			// Calculating electrostatic term
 			float dist_shift=atomic_distance+1.26366f;
@@ -453,7 +453,7 @@ __device__ void gpu_calc_energy(
 			float diel = (1.10859f / dist2)+0.010358f;
 			float es_energy = cData.dockpars.coeff_elec * q1 * q2 / atomic_distance;
 			tmp_el = diel * es_energy;
-			el_energy += tmp_el;
+			el_term += tmp_el;
 			energy += /*diel * es_energy*/tmp_el + /*desolv_energy*/tmp_desol;
 
 			#if defined (DEBUG_ENERGY_KERNEL)
@@ -464,20 +464,20 @@ __device__ void gpu_calc_energy(
 
 	// reduction to calculate energy
 /*
-	REDUCEFLOATSUM(vdw_energy, pFloatAccumulator)
+	REDUCEFLOATSUM(vdw_term, pFloatAccumulator)
 	if (threadIdx.x == 0)
-		printf("vdw_energy = %f\n", vdw_energy);
+		printf("vdw_term = %f\n", vdw_term);
 */
 
 /*
-	REDUCEFLOATSUM(el_energy, pFloatAccumulator)
+	REDUCEFLOATSUM(el_term, pFloatAccumulator)
 	if (threadIdx.x == 0)
-		printf("vdw_energy = %f\n", el_energy);
+		printf("vdw_term = %f\n", el_term);
 */
 
-	REDUCEFLOATSUM(acc_desol_energy, pFloatAccumulator)
+	REDUCEFLOATSUM(desol_term, pFloatAccumulator)
 	if (threadIdx.x == 0)
-		printf("vdw_energy = %f\n", acc_desol_energy);
+		printf("desol_term = %f\n", desol_term);
 
 	REDUCEFLOATSUM(energy, pFloatAccumulator)
 
