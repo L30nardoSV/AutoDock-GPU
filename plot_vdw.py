@@ -98,6 +98,11 @@ xmin_desol = x[np.argmin(desol)]
 text = "desol = {:.7f} \nsample = {}".format(min_desol, xmin_desol)
 axs[2].annotate(text, xy=(xmin_desol, min_desol))
 
+# TODO: Calculating minimum number of bits
+# required for correct representation
+#https://www.mathworks.com/help/dsp/ug/concepts-and-terminology.html
+
+
 # Label in x axis is shared
 plt.xlabel("Samples")
 
