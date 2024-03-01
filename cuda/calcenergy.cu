@@ -463,21 +463,12 @@ __device__ void gpu_calc_energy(
 	} // End contributor_counter for-loop (INTRAMOLECULAR ENERGY)
 
 	// reduction to calculate energy
-/*
 	REDUCEFLOATSUM(vdw_term, pFloatAccumulator)
-	if (threadIdx.x == 0)
-		printf("vdw_term = %f\n", vdw_term);
-*/
-
-/*
 	REDUCEFLOATSUM(el_term, pFloatAccumulator)
-	if (threadIdx.x == 0)
-		printf("vdw_term = %f\n", el_term);
-*/
-
 	REDUCEFLOATSUM(desol_term, pFloatAccumulator)
-	if (threadIdx.x == 0)
-		printf("desol_term = %f\n", desol_term);
+	if (threadIdx.x == 0) {
+		printf("vdw = %10.7f \t\t\t\t el = %10.7f \t\t\t\t desol = %10.7f\n", vdw_term, el_term, desol_term);
+	}
 
 	REDUCEFLOATSUM(energy, pFloatAccumulator)
 
