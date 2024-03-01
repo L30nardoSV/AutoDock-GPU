@@ -23,7 +23,7 @@ NRUN=100
 PSIZE=150
 INPUTS_DIR=./ad-gpu_miniset_20/data
 
-EARLY_TERM_ARG=0
+EARLY_TERM_ARG=1
 RES_DIR=precisionlogs
 
 function numwi() {
