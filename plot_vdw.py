@@ -9,51 +9,55 @@ import numpy as np
 
 #filename = 'data_small_vdw'
 filename = 'data_vdw'
-y = []
-vdw_text = "vdw_energy = "
+search_text = "vdw = "
+
+vdw = []
+el = []
+desol = []
 
 with open(filename) as f:
 	lines = f.readlines()
 	for line in lines:
-		if vdw_text in line:
+		if search_text in line:
 			#print(line)
 			s = line.split()
 			#print(s)
-			s = float(s[2])
-			#print(s)
-			y.append(s)
+			vdw.append(float(s[2]))
+			el.append(float(s[5]))
+			desol.append(float(s[8]))
+			#print(vdw)
 
 # Identifying lengths, mins, and maxs
-leny = len(y); miny = min(y); maxy = max(y)
-print("leny =", leny, "\nminy =", miny, "\nmaxy =", maxy)
+len_vdw = len(vdw); min_vdw = min(vdw); max_vdw = max(vdw)
+print("len_vdw =", len_vdw, "\nmin_vdw =", min_vdw, "\nmax_vdw =", max_vdw)
 
-x = list(range(0, leny))
-lenx = len(x); minx = min(x); maxx = max(x)
-print("lenx =", lenx, "\nminx =", minx, "\nmaxx =", maxx)
+x = list(range(0, len_vdw))
+len_x = len(x); min_x = min(x); max_x = max(x)
+print("len_x =", len_x, "\nmin_x =", min_x, "\nmax_x =", max_x)
 
-assert leny == lenx, "Number of elements is expected to be the same for both axes"
+assert len_vdw == len_x, "Number of elements is expected to be the same for both axes"
 #print(x); print(y)
 
 # Printing only min and max in ticks
-xt = [minx, maxx]
-yt = [miny, maxy]
-print(xt); print(yt)
+t_x = [min_x, max_x]
+t_vdw = [min_vdw, max_vdw]
+print(t_x); print(t_vdw)
 
 # Plotting
 fig, ax = plt.subplots()
-fig = plt.plot(x, y, marker='o')
-ax.set_xticks(xt)
-ax.set_yticks(yt)
+fig = plt.plot(x, vdw, marker='o')
+ax.set_xticks(t_x)
+ax.set_yticks(t_vdw)
 ax.yaxis.set_major_formatter(FormatStrFormatter('%.7f'))
 
 # Annotating min and max coordinates
-xmax = x[np.argmax(y)]
-text = "x = {} \ny = {:.7f}".format(xmax, maxy)
-ax.annotate(text, xy=(xmax, maxy), xytext=(xmax+10, maxy+40))
+xmax = x[np.argmax(vdw)]
+text = "vdw = {:.7f} \nsample = {}".format(max_vdw, xmax)
+ax.annotate(text, xy=(xmax, max_vdw), xytext=(xmax+10, max_vdw+40))
 
-xmin = x[np.argmin(y)]
-text = "x = {} \ny = {:.7f}".format(xmin, miny)
-ax.annotate(text, xy=(xmin, miny), xytext=(xmin+10, miny+40))
+xmin = x[np.argmin(vdw)]
+text = "vdw = {:.7f} \nsample = {}".format(min_vdw, xmin)
+ax.annotate(text, xy=(xmin, min_vdw), xytext=(xmin+10, min_vdw+40))
 
 plt.xlabel("Samples")
 plt.ylabel("Energy (kcal/mol)")
