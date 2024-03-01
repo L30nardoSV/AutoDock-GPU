@@ -123,10 +123,6 @@ for myfile in dir_list:
 #	text = "desol = {:.7f} \nsample = {}".format(min_desol, xmin_desol)
 #	axs[2].annotate(text, xy=(xmin_desol, min_desol))
 
-	# TODO: Calculating minimum number of bits
-	# required for correct representation
-	#https://www.mathworks.com/help/dsp/ug/concepts-and-terminology.html
-
 	# Label in x axis is shared
 #	plt.xlabel("Samples")
 #	plt.show()
@@ -142,3 +138,23 @@ absolute_min_desol = min(all_min_desol); absolute_max_desol = max(all_max_desol)
 print("min_vdw = ", absolute_min_vdw, "\tmax_vdw = ", absolute_max_vdw)
 print("min_el = ", absolute_min_el, "\tmax_el = ", absolute_max_el)
 print("min_desol = ", absolute_min_desol, "\tmax_desol = ", absolute_max_desol)
+
+# Calculating minimum number of bits
+# required for a fixed.point representation
+#https://www.mathworks.com/help/dsp/ug/concepts-and-terminology.html
+large_magnitude_vdw = abs(absolute_min_vdw) if abs(absolute_min_vdw) > abs(absolute_max_vdw) else abs(absolute_max_vdw)
+large_magnitude_el = abs(absolute_min_el) if abs(absolute_min_el) > abs(absolute_max_el) else abs(absolute_max_el)
+large_magnitude_desol = abs(absolute_min_desol) if abs(absolute_min_desol) > abs(absolute_max_desol) else abs(absolute_max_desol)
+#print(large_magnitude_vdw)
+#print(large_magnitude_el)
+#print(large_magnitude_desol)
+
+import math
+numbits_vdw = math.ceil(math.log2(large_magnitude_vdw + 1) + 1)
+numbits_el = math.ceil(math.log2(large_magnitude_el + 1) + 1)
+numbits_desol = math.ceil(math.log2(large_magnitude_desol + 1) + 1)
+
+print('\n')
+print('numbits_vdw = ', numbits_vdw)
+print('numbits_el = ', numbits_el)
+print('numbits_desol = ', numbits_desol)
