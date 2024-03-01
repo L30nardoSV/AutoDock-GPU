@@ -3,12 +3,17 @@
 
 # make DEVICE=GPU TARGETS=86 test > data_vdw
 
+# python3 plot_vdw.py precisionlogs/1mzc_ad
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 
+import sys
 #filename = 'data_small_vdw'
-filename = 'data_vdw'
+#filename = 'data_vdw'
+filename = sys.argv[1]
+
 search_text = "vdw = "
 
 vdw = []
@@ -54,7 +59,7 @@ print("\nmin_all =", min_all, "\tmax_all =", max_all)
 # Plotting
 fig, axs = plt.subplots(3, sharex=True)
 axs[0].plot(x, vdw, color = 'lightcoral', marker='o')
-axs[0].set_title('Van der Waals')
+axs[0].set_title('Van der Waals', rotation = 0, position = (1, 0.1), ha = 'left', va = 'center', fontsize = 15, color='lightcoral')
 axs[0].set_ylabel('Energy (kcal/mol)')
 axs[0].set_xticks(t_x)
 axs[0].set_yticks(t_vdw)
@@ -62,13 +67,13 @@ axs[0].xaxis.set_major_formatter(FormatStrFormatter('%d'))
 axs[0].yaxis.set_major_formatter(FormatStrFormatter('%.7f'))
 
 axs[1].plot(x, el, color = 'aquamarine', marker='x')
-axs[1].set_title('Electrostatic')
+axs[1].set_title('Electrostatic', rotation = 0, position = (1, 0.1), ha = 'left', va = 'center', fontsize = 15, color='aquamarine')
 axs[1].set_ylabel('Energy (kcal/mol)')
 axs[1].set_yticks(t_el)
 axs[1].yaxis.set_major_formatter(FormatStrFormatter('%.7f'))
 
 axs[2].plot(x, desol, color = 'greenyellow', marker='4')
-axs[2].set_title('Desolvation')
+axs[2].set_title('Desolvation', rotation = 0, position = (1, 0.1), ha = 'left', va = 'center', fontsize = 15, color='greenyellow')
 axs[2].set_ylabel('Energy (kcal/mol)')
 axs[2].set_yticks(t_desol)
 axs[2].yaxis.set_major_formatter(FormatStrFormatter('%.7f'))
