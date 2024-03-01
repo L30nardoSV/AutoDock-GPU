@@ -49,7 +49,7 @@ t_desol = [min_desol, max_desol]
 min_all = min(min_vdw, min_el, min_desol)
 max_all = max(max_vdw, max_el, max_desol)
 t_all = [min_all, max_all]
-print("\t\tmin_all =", min_all, "\tmax_all =", max_all)
+print("\nmin_all =", min_all, "\tmax_all =", max_all)
 
 # Plotting
 fig, axs = plt.subplots(3, sharex=True)
