@@ -150,11 +150,16 @@ large_magnitude_desol = abs(absolute_min_desol) if abs(absolute_min_desol) > abs
 #print(large_magnitude_desol)
 
 import math
-numbits_vdw = math.ceil(math.log2(large_magnitude_vdw + 1) + 1)
-numbits_el = math.ceil(math.log2(large_magnitude_el + 1) + 1)
-numbits_desol = math.ceil(math.log2(large_magnitude_desol + 1) + 1)
+numbits_int_vdw = math.ceil(math.log2(large_magnitude_vdw + 1) + 1)
+numbits_int_el = math.ceil(math.log2(large_magnitude_el + 1) + 1)
+numbits_int_desol = math.ceil(math.log2(large_magnitude_desol + 1) + 1)
+
+# Single-precision FP has a precision derived max. 7 digits,
+# which would be 10^(-7).
+# For achieving such precision in binary, we need log2(10^(7)])
+numbits_fract_vdw = numbits_fract_el = numbits_fract_desol = math.ceil(math.log2(math.pow(7)))
 
 print('\n')
-print('numbits_vdw = ', numbits_vdw)
-print('numbits_el = ', numbits_el)
-print('numbits_desol = ', numbits_desol)
+print('format vdw: \t', numbits_int_vdw, '.', numbits_fract_vdw)
+print('format el: \t', numbits_int_el, '.', numbits_fract_el)
+print('format desol: \t', numbits_int_desol, '.', numbits_fract_desol)
