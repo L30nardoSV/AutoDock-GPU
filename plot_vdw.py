@@ -19,10 +19,6 @@ print(dir_list)
 
 search_text = "vdw = "
 
-vdw = []
-el = []
-desol = []
-
 all_min_vdw = []
 all_min_el  = []
 all_min_desol = []
@@ -32,6 +28,10 @@ all_max_el  = []
 all_max_desol = []
 
 for myfile in dir_list:
+	vdw = []
+	el = []
+	desol = []
+
 	filename = path + '/' + myfile
 
 	with open(filename) as f:
