@@ -61,14 +61,14 @@ for myfile in dir_list:
 	assert len_x == len_vdw == len_el == len_desol, "Number of elements is expected to be the same for both axes"
 
 	# Printing only min and max in ticks
-	t_x = [min_x, max_x]
-	t_vdw = [min_vdw, max_vdw]
-	t_el = [min_el, max_el]
-	t_desol = [min_desol, max_desol]
+#	t_x = [min_x, max_x]
+#	t_vdw = [min_vdw, max_vdw]
+#	t_el = [min_el, max_el]
+#	t_desol = [min_desol, max_desol]
 
 	min_all = min(min_vdw, min_el, min_desol)
 	max_all = max(max_vdw, max_el, max_desol)
-	t_all = [min_all, max_all]
+#	t_all = [min_all, max_all]
 	print("min_all =", min_all, "\tmax_all =", max_all)
 
 	# Appending all mins and maxs
