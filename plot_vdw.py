@@ -154,10 +154,10 @@ numbits_int_vdw = math.ceil(math.log2(large_magnitude_vdw + 1) + 1)
 numbits_int_el = math.ceil(math.log2(large_magnitude_el + 1) + 1)
 numbits_int_desol = math.ceil(math.log2(large_magnitude_desol + 1) + 1)
 
-# Single-precision FP has a precision derived max. 7 digits,
-# which would be 10^(-7).
-# For achieving such precision in binary, we need log2(10^(7)])
-numbits_fract_vdw = numbits_fract_el = numbits_fract_desol = math.ceil(math.log2(math.pow(10, 7)))
+# Single-precision FP has a precision derived max. 6 digits,
+# which would be 10^(-6).
+# For achieving such precision in binary, we need log2(10^(6)])
+numbits_fract_vdw = numbits_fract_el = numbits_fract_desol = math.ceil(math.log2(math.pow(10, 6)))
 
 print('\n')
 print('format vdw: \t', numbits_int_vdw, '.', numbits_fract_vdw)
