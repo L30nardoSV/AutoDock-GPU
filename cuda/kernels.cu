@@ -123,7 +123,7 @@ __device__ inline int64_t ullitolli(uint64_t u)
  *
  * Don't forget to compile specifying the architecture, e.g., sm_86.
  * For AutoDock-GPU, this can be done via the TARGETS option.
- * make DEVICE=GPU TESTLS=ad NUMWI=64 TARGETS=86 test
+ * make DEVICE=GPU TESTLS=ad NUMWI=64 TARGETS=86 TENSOR=ON test > output
  * https://stackoverflow.com/a/53634598/1616865
  */
 #include <mma.h>
@@ -228,6 +228,13 @@ __device__ void reduce_via_tensor_units(half *data_to_be_reduced) {
 	__syncthreads();
 
 	if (threadIdx.x <= 31) { // Only one warp performs reduction
+
+		/*
+		if (blockIdx.x == 0 && threadIdx.x == 0) {
+			printf("\n--------->>> blockIdx.x = %d, threadIdx.x = %d", blockIdx.x, threadIdx.x);
+		}
+		*/
+
 		#ifdef USE_TCEC
 		__shared__ __align__ (256) float Q_data[TILE_SIZE];
 		#else
@@ -235,6 +242,17 @@ __device__ void reduce_via_tensor_units(half *data_to_be_reduced) {
 		#endif
 
 		fill_Q(Q_data);
+
+		/*
+		if (blockIdx.x == 0 && threadIdx.x == 0) {
+			printf("\nQ_data");
+			for (uint i = 0; i < 16 * 16; i++) {
+				if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+				printf(" %5.3f ", __half2float(Q_data[i]));
+			}
+			printf("\n");
+		}
+		*/
 
 		#ifdef USE_TCEC
 		__shared__ __align__ (256) float tmp[TILE_SIZE];
@@ -274,9 +292,45 @@ __device__ void reduce_via_tensor_units(half *data_to_be_reduced) {
 		wmma::load_matrix_sync(frag_Q, Q_data, 16);
 		#endif
 
+		/*
+		// Only accumulator-type fragment can be copied into shared memory
+		wmma::store_matrix_sync(data_to_be_reduced, frag_V, 16, wmma::mem_col_major);
+		if (blockIdx.x == 0 && threadIdx.x == 0) {
+			printf("\nfrag_V");
+			for (uint i = 0; i < 16 * 16; i++) {
+				if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+				printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
+			}
+			printf("\n");
+		}
+		*/
+		/*
+		// Only accumulator-type fragment can be copied into shared memory
+		wmma::store_matrix_sync(data_to_be_reduced, frag_C, 16, wmma::mem_col_major);
+		if (blockIdx.x == 0 && threadIdx.x == 0) {
+			printf("\nfrag_C");
+			for (uint i = 0; i < 16 * 16; i++) {
+				if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+				printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
+			}
+			printf("\n");
+		}
+		*/
+
+		/*
+		if (blockIdx.x == 0 && threadIdx.x == 0) {
+			printf("\nBEFORE blockIdx.x = %d, threadIdx.x = %d", blockIdx.x, threadIdx.x);
+		}
+		*/
+
 		// 1. Accumulate the values: V <- AP + V
 		for(uint i = 0; i < (4 * NUM_OF_THREADS_PER_BLOCK)/TILE_SIZE; i++){
 			const unsigned int offset = i * TILE_SIZE;
+			/*
+			if (blockIdx.x == 0 && threadIdx.x == 0) {
+				printf("\ni = %d, tripcount= %d, offset = %d ", i, (4 * NUM_OF_THREADS_PER_BLOCK)/TILE_SIZE, offset);
+			}
+			*/
 
 			#ifdef USE_TCEC
 			mtk::wmma::tcec::fragment<wmma::matrix_a, rowscols_M, rowscols_N, rowscols_K, tf32, wmma::col_major> frag_A;
@@ -284,10 +338,58 @@ __device__ void reduce_via_tensor_units(half *data_to_be_reduced) {
 			mtk::wmma::tcec::mma_sync(frag_V, frag_A, frag_P, frag_V);
 			#else
 			wmma::fragment<wmma::matrix_a, rowscols_M, rowscols_N, rowscols_K, half, wmma::col_major> frag_A;
+
+			/*
+			if (blockIdx.x == 0 && threadIdx.x == 0) {
+				printf("\ndata_to_be_reduced (inside)");
+				for (uint i = 0; i < 16 * 16; i++) {
+					if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+					printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
+				}
+				printf("\n");
+			}
+			*/
+
 			wmma::load_matrix_sync(frag_A, data_to_be_reduced + offset, 16);
+
+			/*
+			// frag_V is accumulator, frag_W is matrix_b, frag_A is matrix_a
+			wmma::fill_fragment(frag_V, HALF_ZERO); // frag_V is initialized as ZERO
+			wmma::load_matrix_sync(frag_W, Q_data, 16); // frag_W is filled as identity matrix
+			wmma::mma_sync(frag_V, frag_A, frag_W, frag_V); // frag_V is loaded with frag_A's contents
+			wmma::store_matrix_sync(tmp, frag_V, 16, wmma::mem_col_major);
+			if (blockIdx.x == 0 && threadIdx.x == 0) {
+				printf("\nfrag_A");
+				for (uint i = 0; i < 16 * 16; i++) {
+					if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+					printf(" %5.3f ", __half2float(tmp[i]));
+				}
+				printf("\n");
+			}
+			*/
+
 			wmma::mma_sync(frag_V, frag_A, frag_P, frag_V);
 			#endif
+
+			/*
+			// Only accumulator-type fragment can be copied into shared memory
+			wmma::store_matrix_sync(tmp, frag_V, 16, wmma::mem_col_major);
+			if (blockIdx.x == 0 && threadIdx.x == 0) {
+				printf("\nfrag_V");
+				for (uint i = 0; i < 16 * 16; i++) {
+					if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+					printf(" %5.3f ", __half2float(tmp[i]));
+				}
+				printf("\n");
+			}
+			*/
 		}
+
+		/*
+		if (blockIdx.x == 0 && threadIdx.x == 0) {
+			printf("\nAFTER blockIdx.x = %d, threadIdx.x = %d", blockIdx.x, threadIdx.x);
+		}
+		*/
 
 		// W <- V (required since we need V as a "wmma::matrix_b")
 		#ifdef USE_TCEC
@@ -297,6 +399,20 @@ __device__ void reduce_via_tensor_units(half *data_to_be_reduced) {
 		wmma::store_matrix_sync(tmp, frag_V, 16, wmma::mem_col_major);
 		wmma::load_matrix_sync(frag_W, tmp, 16);
 		#endif
+
+		/*
+		//__syncthreads();
+		if (blockIdx.x == 0 && threadIdx.x == 0) {
+			printf("\ntmp");
+			for (uint i = 0; i < 16 * 16; i++) {
+				if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+				printf(" %5.3f ", __half2float(tmp[i]));
+			}
+			printf("\n");
+		}
+
+		//__syncthreads();
+		*/
 
 		// 2. Perform line sum: C <- QW + C (zero)
 		#ifdef USE_TCEC

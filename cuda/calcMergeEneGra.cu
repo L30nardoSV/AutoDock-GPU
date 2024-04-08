@@ -663,6 +663,25 @@ __device__ void gpu_calc_energrad(
 	data_to_be_reduced[4*threadIdx.x + 1] = __float2half(torque_rot.y);
 	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(torque_rot.z);
 	data_to_be_reduced[4*threadIdx.x + 3] = __float2half(energy);
+	/*
+	data_to_be_reduced[4*threadIdx.x] = __float2half(22.04f);
+	data_to_be_reduced[4*threadIdx.x + 1] = __float2half(26.05f);
+	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(19.02f);
+	data_to_be_reduced[4*threadIdx.x + 3] = __float2half(30.11f);
+	*/
+
+	/*
+	__syncthreads();
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		printf("\ndata_to_be_reduced (BEFORE 1)");
+		for (uint i = 0; i < 16 * 16; i++) {
+			if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
+			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
+		}
+		printf("\n");
+    }
+    __syncthreads();
+	*/
 	#endif
 
 	// 2. Perform reduction via tensor units
@@ -675,6 +694,18 @@ __device__ void gpu_calc_energrad(
 	torque_rot.z = data_to_be_reduced[2];
 	energy = data_to_be_reduced[3];
 	#else
+	/*
+	__syncthreads();
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		printf("\ndata_to_be_reduced (AFTER 1)");
+		for (uint i = 0; i < 16 * 16; i++) {
+			if ((i % 16) == 0) {printf("\n[Row %u]: ", i/16);}
+			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
+		}
+		printf("\n");
+    }
+    __syncthreads();
+	*/
 	torque_rot.x = __half2float(data_to_be_reduced[0]);
 	torque_rot.y = __half2float(data_to_be_reduced[1]);
 	torque_rot.z = __half2float(data_to_be_reduced[2]);
@@ -719,10 +750,41 @@ __device__ void gpu_calc_energrad(
 	data_to_be_reduced[4*threadIdx.x] = __float2half(gx);
 	data_to_be_reduced[4*threadIdx.x + 1] = __float2half(gy);
 	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(gz);
+	/*
+	data_to_be_reduced[4*threadIdx.x] = __float2half(30.11f);
+	data_to_be_reduced[4*threadIdx.x + 1] = __float2half(30.11f);
+	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(30.11f);
+	data_to_be_reduced[4*threadIdx.x + 3] = __float2half(30.11f);
+	*/
+	/*
+	__syncthreads();
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		printf("\ndata_to_be_reduced (BEFORE 2)");
+		for (uint i = 0; i < 16 * 16; i++) {
+			if ((i % 16) == 0) {printf("\n[Row %u]: ", i/16);}
+			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
+		}
+		printf("\n");
+    }
+    __syncthreads();
+	*/
 	#endif
 
 	// 2. Perform reduction via tensor units
 	reduce_via_tensor_units(data_to_be_reduced);
+
+	/*
+	__syncthreads();
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		printf("\ndata_to_be_reduced (AFTER 2)");
+		for (uint i = 0; i < 16 * 16; i++) {
+			if ((i % 16) == 0) {printf("\n[Row %u]: ", i/16);}
+			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
+		}
+		printf("\n");
+    }
+	__syncthreads();
+	*/
 
 	// 3. Retrieve results from shared memory
 	#ifdef USE_TCEC
