@@ -750,10 +750,10 @@ __device__ void gpu_calc_energrad(
 	data_to_be_reduced[4*threadIdx.x + 1] = __float2half(gy);
 	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(gz);
 	/*
-	data_to_be_reduced[4*threadIdx.x] = __float2half(30.11f);
-	data_to_be_reduced[4*threadIdx.x + 1] = __float2half(30.11f);
-	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(30.11f);
-	data_to_be_reduced[4*threadIdx.x + 3] = __float2half(30.11f);
+	data_to_be_reduced[4*threadIdx.x] = __float2half(19.07f);
+	data_to_be_reduced[4*threadIdx.x + 1] = __float2half(19.07f);
+	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(19.07f);
+	data_to_be_reduced[4*threadIdx.x + 3] = __float2half(19.07f);
 	*/
 	/*
 	__syncthreads();
