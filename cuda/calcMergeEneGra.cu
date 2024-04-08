@@ -669,11 +669,10 @@ __device__ void gpu_calc_energrad(
 	data_to_be_reduced[4*threadIdx.x + 2] = __float2half(19.02f);
 	data_to_be_reduced[4*threadIdx.x + 3] = __float2half(30.11f);
 	*/
-
 	/*
 	__syncthreads();
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
-		printf("\ndata_to_be_reduced (BEFORE 1)");
+		printf("\ndata_to_be_reduced (BEFORE 1st reduction)");
 		for (uint i = 0; i < 16 * 16; i++) {
 			if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
 			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
@@ -697,7 +696,7 @@ __device__ void gpu_calc_energrad(
 	/*
 	__syncthreads();
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
-		printf("\ndata_to_be_reduced (AFTER 1)");
+		printf("\ndata_to_be_reduced (AFTER 1st reduction)");
 		for (uint i = 0; i < 16 * 16; i++) {
 			if ((i % 16) == 0) {printf("\n[Row %u]: ", i/16);}
 			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
@@ -759,7 +758,7 @@ __device__ void gpu_calc_energrad(
 	/*
 	__syncthreads();
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
-		printf("\ndata_to_be_reduced (BEFORE 2)");
+		printf("\ndata_to_be_reduced (BEFORE 2nd reduction)");
 		for (uint i = 0; i < 16 * 16; i++) {
 			if ((i % 16) == 0) {printf("\n[Row %u]: ", i/16);}
 			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
@@ -776,7 +775,7 @@ __device__ void gpu_calc_energrad(
 	/*
 	__syncthreads();
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
-		printf("\ndata_to_be_reduced (AFTER 2)");
+		printf("\ndata_to_be_reduced (AFTER 2nd reduction)");
 		for (uint i = 0; i < 16 * 16; i++) {
 			if ((i % 16) == 0) {printf("\n[Row %u]: ", i/16);}
 			printf(" %5.3f ", __half2float(data_to_be_reduced[i]));
