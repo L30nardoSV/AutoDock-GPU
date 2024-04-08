@@ -212,7 +212,7 @@ __device__ void fill_Q(half *Q_data) {
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
 		printf("\nQ_data");
 		for (uint i = 0; i < 16 * 16; i++) {
-			if ((i % 16) == 0) {printf("\n[Row %u]: ", i/16);}
+			if ((i % 16) == 0) {printf("\n[Row %2u]: ", i/16);}
 			printf(" %2.2f ", __half2float(Q_data[i]));
 		}
 		printf("\n");
